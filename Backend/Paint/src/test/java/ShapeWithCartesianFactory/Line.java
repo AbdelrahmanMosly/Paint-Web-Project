@@ -47,13 +47,12 @@ public class Line implements ShapeWithCartesian{
     }
     @Override
     public String toString(){
-        String s= "Line {\n"
+        return "Line {"
                 +"\n start(x,y) = "+ this.getCartesianCoordinate()[0][0]+","+this.getCartesianCoordinate()[0][1]
                 +"\n end(x,y) = "+ this.getCartesianCoordinate()[1][0]+","+this.getCartesianCoordinate()[1][1]
                 +"\n Color="+getColor()
                 +"\n isFill="+isFill()
                 +"\n }";
-        return  s;
     }
 
 }

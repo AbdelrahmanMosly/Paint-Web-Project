@@ -55,9 +55,9 @@ public class Circle implements ShapeWithDimensions{
     }
     @Override
     public String toString(){
-        return  "Circle {\n"
-                +" radius = "+ this.getDimensions()[0]
-                + "\n position (x,y) :"+ this.getPosition()[0]+","+ this.getPosition()[1]
+        return  "Circle {"
+                +"\n radius = "+ this.getDimensions()[0]
+                +"\n position (x,y) :"+ this.getPosition()[0]+","+ this.getPosition()[1]
                 +"\n isFill="+isFill()
                 +"\n }";
     }

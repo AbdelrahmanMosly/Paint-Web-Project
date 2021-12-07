@@ -57,8 +57,8 @@ public class Ellipse implements ShapeWithDimensions{
     }
     @Override
     public String toString(){
-        return  "Ellipse {\n"
-                +" radiusX = "+ this.getDimensions()[0]
+        return  "Ellipse {"
+                +"\n radiusX = "+ this.getDimensions()[0]
                 +"\n radiusY= "+ this.getDimensions()[1]
                 +"\n position (x,y) :"+ this.getPosition()[0]+","+ this.getPosition()[1]
                 +"\n isFill="+isFill()

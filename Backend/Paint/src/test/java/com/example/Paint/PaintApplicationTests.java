@@ -25,6 +25,7 @@ class PaintApplicationTests {
 		shape1.setPosition(5,3);
 		shape1.setFill(false);
 		System.out.println(shape1);
+
 		ShapeWithDimensions shape2;
 		shape2 = ShapeWithDimensionsFactory.createShape("Ellipse",
 				0,
@@ -38,18 +39,27 @@ class PaintApplicationTests {
 		shape1.setDimensions(new int[] {1});
 		System.out.println(shape1);
 		ShapeWithCartesianFactory shapeWithCartesianFactory=new ShapeWithCartesianFactory();
+
 		ShapeWithCartesian shape3;
 		shape3 = ShapeWithCartesianFactory.createShape("Line",
 				new int[][] {{1,2},{3,4}},
 				"Green",
 				true);
 		System.out.println(shape3.toString());
+
 		ShapeWithCartesian shape4;
 		shape4 = ShapeWithCartesianFactory.createShape("Triangle",
 				new int[][] {{1,2},{3,4},{5,6}},
 				"pink",
 				false);
 		System.out.println(shape4.toString());
+
+		ShapeWithCartesian shape5;
+		shape5 = ShapeWithCartesianFactory.createShape("square",
+				new int[][] {{1,2},{3,4}},
+				"purble",
+				false);
+		System.out.println(shape5.toString());
 
 	}
 

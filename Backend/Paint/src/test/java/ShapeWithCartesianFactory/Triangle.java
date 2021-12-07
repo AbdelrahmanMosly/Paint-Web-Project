@@ -54,7 +54,7 @@ public class Triangle implements ShapeWithCartesian{
     }
     @Override
     public String toString(){
-        return "Triangle {\n"
+        return "Triangle {"
                 +"\n point1 (x,y) = "+ this.getCartesianCoordinate()[0][0]+","+this.getCartesianCoordinate()[0][1]
                 +"\n point2 (x,y) = "+ this.getCartesianCoordinate()[1][0]+","+this.getCartesianCoordinate()[1][1]
                 +"\n point3 (x,y) = "+ this.getCartesianCoordinate()[2][0]+","+this.getCartesianCoordinate()[2][1]

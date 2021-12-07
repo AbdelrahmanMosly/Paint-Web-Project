@@ -11,7 +11,7 @@ public class ShapeWithCartesianFactory {
         if(shapeType.equalsIgnoreCase("RECTANGLE"))
             return new Rectangle(cartesianCoordiante,color,fill);
         if(shapeType.equalsIgnoreCase("SQUARE"))
-            return new Rectangle(cartesianCoordiante,color,fill);
+            return new Square(cartesianCoordiante,color,fill);
         if(shapeType.equalsIgnoreCase("TRIANGLE"))
             return new Triangle(cartesianCoordiante,color,fill);
 
