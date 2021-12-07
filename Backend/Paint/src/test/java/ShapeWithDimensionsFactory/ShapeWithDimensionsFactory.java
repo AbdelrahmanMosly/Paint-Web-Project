@@ -8,8 +8,6 @@ public class ShapeWithDimensionsFactory {
         }
         if(shapeType.equalsIgnoreCase("CIRCLE"))
             return new Circle(x,y,dimensions,color,fill);
-        if(shapeType.equalsIgnoreCase("SQUARE"))
-            return new Square(x,y,dimensions,color,fill);
         if(shapeType.equalsIgnoreCase("Ellipse"))
             return new Ellipse(x,y,dimensions,color,fill);
 
