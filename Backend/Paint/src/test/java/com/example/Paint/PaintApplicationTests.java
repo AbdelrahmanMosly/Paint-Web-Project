@@ -61,6 +61,10 @@ class PaintApplicationTests {
 				false);
 		System.out.println(shape5.toString());
 
+		shape5.setColor("bte5e");
+		System.out.println(shape5.toString());
+
+
 	}
 
 
