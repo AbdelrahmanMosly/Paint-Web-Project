@@ -61,6 +61,7 @@ public class Ellipse implements ShapeWithDimensions{
                 +"\n radiusX = "+ this.getDimensions()[0]
                 +"\n radiusY= "+ this.getDimensions()[1]
                 +"\n position (x,y) :"+ this.getPosition()[0]+","+ this.getPosition()[1]
+                +"\n Color="+getColor()
                 +"\n isFill="+isFill()
                 +"\n }";
     }

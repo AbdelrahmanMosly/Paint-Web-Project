@@ -58,6 +58,7 @@ public class Circle implements ShapeWithDimensions{
         return  "Circle {"
                 +"\n radius = "+ this.getDimensions()[0]
                 +"\n position (x,y) :"+ this.getPosition()[0]+","+ this.getPosition()[1]
+                +"\n Color="+getColor()
                 +"\n isFill="+isFill()
                 +"\n }";
     }
