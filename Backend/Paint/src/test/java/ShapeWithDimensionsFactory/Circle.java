@@ -8,11 +8,13 @@ public class Circle implements ShapeWithDimensions{
     private Point position;
     private String color;
     private boolean fill;
-    public Circle(Point position,int[] dimensions,String color,boolean fill){
+    private  int edgeWidth;
+    public Circle(Point position,int[] dimensions,String color,boolean fill,int edgeWidth){
         this.position=new Point(position.x,position.y);
         this.radius=dimensions[0];
         this.color=color;
         this.fill=fill;
+        this.edgeWidth=edgeWidth;
     }
     @Override
     public void setPosition(Point position){
@@ -32,6 +34,16 @@ public class Circle implements ShapeWithDimensions{
         this.radius= dimensions[0];
     }
 
+
+    @Override
+    public int getEdgeWidth() {
+        return edgeWidth;
+    }
+
+    @Override
+    public void setEdgeWidth(int edgeWidth) {
+        this.edgeWidth = edgeWidth;
+    }
     @Override
     public String getColor() {
         return color;
@@ -52,7 +64,7 @@ public class Circle implements ShapeWithDimensions{
     @Override
     public Cloneable clone(){
         int[] dimensions={this.radius};
-        return new Circle(this.position,dimensions,this.color,this.fill);
+        return new Circle(this.position,dimensions,this.color,this.fill,this.edgeWidth);
     }
     @Override
     public String toString(){
@@ -61,6 +73,7 @@ public class Circle implements ShapeWithDimensions{
                 +"\n position (x,y) :"+ this.getPosition().x+","+ this.getPosition().y
                 +"\n Color="+getColor()
                 +"\n isFill="+isFill()
+                +"\n EdgeWidth="+getEdgeWidth()
                 +"\n }";
     }
 }

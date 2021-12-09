@@ -7,6 +7,7 @@ public abstract class TwoPointsCartesianShape implements ShapeWithCartesian{
     protected Point[] cartesianCoordinate=new Point[2];
     protected String color;
     protected boolean fill;
+    protected int edgeWidth;
 
 
     @Override
@@ -22,6 +23,17 @@ public abstract class TwoPointsCartesianShape implements ShapeWithCartesian{
         this.cartesianCoordinate[0]=cartesianCoordinate[0];
         this.cartesianCoordinate[1]=cartesianCoordinate[1];
     }
+
+    @Override
+    public int getEdgeWidth() {
+        return edgeWidth;
+    }
+
+    @Override
+    public void setEdgeWidth(int edgeWidth) {
+        this.edgeWidth = edgeWidth;
+    }
+
     @Override
     public void setColor(String color) {
         this.color=color;

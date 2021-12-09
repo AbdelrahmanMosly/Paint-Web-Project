@@ -6,17 +6,31 @@ public class Triangle implements ShapeWithCartesian{
     private Point[] cartesianCoordinate=new Point[3];
     private String color;
     private boolean fill;
-    Triangle(Point[] cartesianCoordinate,String color,boolean fill){
+    private int edgeWidth;
+    Triangle(Point[] cartesianCoordinate,String color,boolean fill,int edgeWidth){
         this.cartesianCoordinate[0]=new Point(cartesianCoordinate[0].x,cartesianCoordinate[0].y);
         this.cartesianCoordinate[1]=new Point(cartesianCoordinate[1].x,cartesianCoordinate[1].y);
         this.cartesianCoordinate[2]=new Point(cartesianCoordinate[2].x,cartesianCoordinate[2].y);
         this.color=color;
         this.fill=fill;
+        this.edgeWidth=edgeWidth;
     }
     @Override
     public Point[] getCartesianCoordinate(){
         return cartesianCoordinate;
     }
+
+
+    @Override
+    public int getEdgeWidth() {
+        return edgeWidth;
+    }
+
+    @Override
+    public void setEdgeWidth(int edgeWidth) {
+        this.edgeWidth = edgeWidth;
+    }
+
     @Override
     public String getColor() {
         return color;
@@ -46,7 +60,7 @@ public class Triangle implements ShapeWithCartesian{
     }
     @Override
     public Cloneable clone(){
-        return new Triangle(this.cartesianCoordinate,this.color,this.fill);
+        return new Triangle(this.cartesianCoordinate,this.color,this.fill,this.edgeWidth);
     }
     @Override
     public String toString(){
@@ -56,6 +70,7 @@ public class Triangle implements ShapeWithCartesian{
                 +"\n point3 (x,y) = "+ this.getCartesianCoordinate()[2].x+","+this.getCartesianCoordinate()[2].y
                 +"\n Color="+getColor()
                 +"\n isFill="+isFill()
+                +"\n EdgeWidth="+getEdgeWidth()
                 +"\n }";
     }
 

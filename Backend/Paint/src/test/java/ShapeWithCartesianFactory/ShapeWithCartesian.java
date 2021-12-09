@@ -7,6 +7,8 @@ public interface ShapeWithCartesian extends Cloneable{
     String getColor();
     boolean isFill();
     void setFill(boolean fill);
+    void setEdgeWidth(int edgeWidth);
+    int getEdgeWidth();
     public void setCartesianCoordinate(Point[] cartesianCoordinate);
     void setColor(String color);
     String toString();

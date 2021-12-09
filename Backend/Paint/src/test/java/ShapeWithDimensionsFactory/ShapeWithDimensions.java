@@ -7,6 +7,8 @@ public interface ShapeWithDimensions extends Cloneable {
      Point getPosition();
      int[] getDimensions();
      void setDimensions(int[] dimensions);
+     void setEdgeWidth(int edgeWidth);
+     int getEdgeWidth();
      boolean isFill();
      void setFill(boolean fill);
      String getColor();

@@ -8,12 +8,14 @@ public class Ellipse implements ShapeWithDimensions{
     private Point position;
     private String color;
     private boolean fill;
-    public Ellipse(Point position,int[] dimensions,String color,boolean fill){
+    private  int edgeWidth;
+    public Ellipse(Point position,int[] dimensions,String color,boolean fill,int edgeWidth){
         this.position=new Point(position.x,position.y);
         this.radiusX=dimensions[0];
         this.radiusY=dimensions[1];
         this.color=color;
         this.fill=fill;
+        this.edgeWidth=edgeWidth;
     }
     @Override
     public void setPosition(Point position){
@@ -32,6 +34,16 @@ public class Ellipse implements ShapeWithDimensions{
     public void setDimensions(int[] dimensions){
         this.radiusX= dimensions[0];
         this.radiusY=dimensions[1];
+    }
+
+    @Override
+    public int getEdgeWidth() {
+        return edgeWidth;
+    }
+
+    @Override
+    public void setEdgeWidth(int edgeWidth) {
+        this.edgeWidth = edgeWidth;
     }
 
     @Override
@@ -54,7 +66,7 @@ public class Ellipse implements ShapeWithDimensions{
     @Override
     public Cloneable clone(){
         int[] dimensions={this.radiusX,this.radiusY};
-        return new Ellipse(this.position,dimensions,this.color,this.fill);
+        return new Ellipse(this.position,dimensions,this.color,this.fill,this.edgeWidth);
     }
     @Override
     public String toString(){
@@ -64,6 +76,7 @@ public class Ellipse implements ShapeWithDimensions{
                 +"\n position (x,y) :"+ this.getPosition().x+","+ this.getPosition().y
                 +"\n Color="+getColor()
                 +"\n isFill="+isFill()
+                +"\n EdgeWidth="+getEdgeWidth()
                 +"\n }";
     }
 }
