@@ -1,8 +1,10 @@
 package ShapeWithCartesianFactory;
 
+import java.awt.*;
+
 public class ShapeWithCartesianFactory {
     public static ShapeWithCartesian
-            createShape(String shapeType,int[][] cartesianCoordiante,String color,boolean fill){
+            createShape(String shapeType, Point[] cartesianCoordiante, String color, boolean fill){
         if(shapeType==null){
             return null;
         }

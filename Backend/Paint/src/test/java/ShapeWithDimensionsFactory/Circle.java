@@ -1,30 +1,31 @@
 package ShapeWithDimensionsFactory;
 
+import java.awt.*;
+
 public class Circle implements ShapeWithDimensions{
 
     private int radius;
-    private int x,y;//x and y position
+    private Point position;
     private String color;
     private boolean fill;
-    public Circle(int x,int y,int[] dimensions,String color,boolean fill){
-        this.x = x;
-        this.y=y;
+    public Circle(Point position,int[] dimensions,String color,boolean fill){
+        this.position=new Point(position.x,position.y);
         this.radius=dimensions[0];
         this.color=color;
         this.fill=fill;
     }
     @Override
-    public void setPosition(int x,int y){
-        this.x=x;
-        this.y=y;
+    public void setPosition(Point position){
+        this.position.x=position.x;
+        this.position.y=position.y;
     }
     @Override
-    public int[] getPosition(){
-        return new int[]{x,y};
+    public Point getPosition(){
+        return position;
     }
     @Override
     public int[] getDimensions(){
-        return new int[] {this.radius};
+        return new int[] {radius};
     }
     @Override
     public void setDimensions(int[] dimensions){
@@ -51,13 +52,13 @@ public class Circle implements ShapeWithDimensions{
     @Override
     public Cloneable clone(){
         int[] dimensions={this.radius};
-        return new Circle(this.x,this.y,dimensions,this.color,this.fill);
+        return new Circle(this.position,dimensions,this.color,this.fill);
     }
     @Override
     public String toString(){
         return  "Circle {"
                 +"\n radius = "+ this.getDimensions()[0]
-                +"\n position (x,y) :"+ this.getPosition()[0]+","+ this.getPosition()[1]
+                +"\n position (x,y) :"+ this.getPosition().x+","+ this.getPosition().y
                 +"\n Color="+getColor()
                 +"\n isFill="+isFill()
                 +"\n }";

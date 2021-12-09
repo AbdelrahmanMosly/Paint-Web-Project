@@ -1,8 +1,10 @@
 package ShapeWithDimensionsFactory;
 
+import java.awt.*;
+
 public interface ShapeWithDimensions extends Cloneable {
-     void setPosition(int x,int y);
-     int[] getPosition();
+     void setPosition(Point position);
+     Point getPosition();
      int[] getDimensions();
      void setDimensions(int[] dimensions);
      boolean isFill();

@@ -1,27 +1,28 @@
 package ShapeWithDimensionsFactory;
 
+import java.awt.*;
+
 public class Ellipse implements ShapeWithDimensions{
     private int radiusX;
     private int radiusY;
-    private int x,y;//x and y position
+    private Point position;
     private String color;
     private boolean fill;
-    public Ellipse(int x,int y,int[] dimensions,String color,boolean fill){
-        this.x = x;
-        this.y=y;
+    public Ellipse(Point position,int[] dimensions,String color,boolean fill){
+        this.position=new Point(position.x,position.y);
         this.radiusX=dimensions[0];
         this.radiusY=dimensions[1];
         this.color=color;
         this.fill=fill;
     }
     @Override
-    public void setPosition(int x,int y){
-        this.x=x;
-        this.y=y;
+    public void setPosition(Point position){
+        this.position.x=position.x;
+        this.position.y=position.y;
     }
     @Override
-    public int[] getPosition(){
-        return new int[]{this.x,this.y};
+    public Point getPosition(){
+        return position;
     }
     @Override
     public int[] getDimensions(){
@@ -53,14 +54,14 @@ public class Ellipse implements ShapeWithDimensions{
     @Override
     public Cloneable clone(){
         int[] dimensions={this.radiusX,this.radiusY};
-        return new Ellipse(this.x,this.y,dimensions,this.color,this.fill);
+        return new Ellipse(this.position,dimensions,this.color,this.fill);
     }
     @Override
     public String toString(){
         return  "Ellipse {"
                 +"\n radiusX = "+ this.getDimensions()[0]
                 +"\n radiusY= "+ this.getDimensions()[1]
-                +"\n position (x,y) :"+ this.getPosition()[0]+","+ this.getPosition()[1]
+                +"\n position (x,y) :"+ this.getPosition().x+","+ this.getPosition().y
                 +"\n Color="+getColor()
                 +"\n isFill="+isFill()
                 +"\n }";
