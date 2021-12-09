@@ -1,0 +1,37 @@
+<body>
+  <div class="paint">
+    <div class="ribbon">
+      <div class="actions">
+        <button (click)="undo()">Undo</button>
+        <button (click)="redo()">Redo</button>
+        <button>Save</button>
+        <button>Load</button>
+      </div>
+      <div class="shapes">
+        <button [disabled]="buttons[0]" title="Select Shape" (click)="clicked('line')">Line</button>
+        <button [disabled]="buttons[1]" title="Select Shape" (click)="clicked('circle')">Circle</button>
+        <button [disabled]="buttons[2]" title="Select Shape" (click)="clicked('ellipse')">Ellipse</button>
+        <button [disabled]="buttons[3]" title="Select Shape" (click)="clicked('triangle')">Triangle</button>
+        <button [disabled]="buttons[4]" title="Select Shape" (click)="clicked('rectangle')">Rectangle</button>
+        <button [disabled]="buttons[5]" title="Select Shape" (click)="clicked('square')">Square</button>
+      </div>
+      <div class="tools">
+        <button [disabled]="buttons[6]" (click)="clicked('pen')">Pen</button>
+        <button class={{fill}} (click)="fillSwitch()">Fill</button>
+        <select title="Select Line Width" #lineWidth>
+          <option value="2">2 Px</option>
+          <option value="4">4 Px</option>
+          <option value="6">6 Px</option>
+          <option value="8">8 Px</option>
+          <option value="10">10 Px</option>
+        </select>
+        <input title="Select Color" type="color" #color>
+        <button [disabled]="buttons[7]">Resize</button>
+        <button [disabled]="buttons[8]">Move</button>
+        <button [disabled]="buttons[9]">Copy</button>
+        <button [disabled]="buttons[10]">Delete</button>
+      </div>
+    </div><br>
+    <canvas #canvas></canvas>
+  </div>
+</body>
