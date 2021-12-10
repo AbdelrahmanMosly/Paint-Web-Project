@@ -38,7 +38,7 @@ public class Triangle extends Shape{
         this.p3 = p3;
     }
 
-     int orientation(Point a, Point b, Point c){
+    int orientation(Point a, Point b, Point c){
         int val = (b.y - a.y)*(c.x - b.x) - (b.x - a.x)*(c.y - b.y);
         if(val == 0)
             return 0;
