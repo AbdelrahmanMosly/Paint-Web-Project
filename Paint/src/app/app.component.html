@@ -6,6 +6,8 @@
         <button (click)="redo()">Redo</button>
         <button (click)="save()">Save</button>
         <button (click)="load()">Load</button>
+        <button (click)="clear()">Clear</button>
+        <button (click)="toggleSelect()">Select</button>
       </div>
       <div class="shapes">
         <button [disabled]="buttons[0]" title="Select Shape" (click)="clicked('line')">Line</button>
@@ -17,7 +19,7 @@
       </div>
       <div class="tools">
         <button [disabled]="buttons[6]" (click)="clicked('pen')">Pen</button>
-        <button class={{fill}} (click)="fillSwitch()">Fill</button>
+        <button (click)="fillSwitch()">Fill</button>
         <select title="Select Line Width" #lineWidth>
           <option value="2">2 Px</option>
           <option value="4">4 Px</option>
@@ -26,14 +28,13 @@
           <option value="10">10 Px</option>
         </select>
         <input title="Select Color" type="color" #color>
-        <button [disabled]="buttons[7]">Resize</button>
-        <button [disabled]="buttons[8]">Move</button>
-        <button [disabled]="buttons[9]">Copy</button>
-        <button [disabled]="buttons[10]">Delete</button>
-        <button [disabled]="isSelecting" (click)="toggleSelect()">Select</button>
+        <button [disabled]="buttons[7]" (click)="resize()">Resize</button>
+        <button [disabled]="buttons[8]" (click)="toggleMove()">Move</button>
+        <button [disabled]="buttons[9]" (click)="copy()">Copy</button>
+        <button [disabled]="buttons[10]" (click)="delete()">Delete</button>
         
       </div>
     </div><br>
-    <canvas #canvas (click)="select()"></canvas>
+    <canvas #canvas></canvas>
   </div>
 </body>
