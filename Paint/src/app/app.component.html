@@ -17,7 +17,7 @@
       </div>
       <div class="tools">
         <button [disabled]="buttons[6]" (click)="clicked('pen')">Pen</button>
-        <button (click)="fillSwitch()">Fill</button>
+        <button class={{fill}} (click)="fillSwitch()">Fill</button>
         <select title="Select Line Width" #lineWidth>
           <option value="2">2 Px</option>
           <option value="4">4 Px</option>

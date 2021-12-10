@@ -14,7 +14,8 @@ import java.io.*;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/api/v1/paint")
+@CrossOrigin("http://localhost:4200")
+@RequestMapping("http://localhost:8080/api/v1/paint")
 public class PaintController {
 
     private final ShapeFactory shapeFactory = new ShapeFactory();
