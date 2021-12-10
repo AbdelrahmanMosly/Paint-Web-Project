@@ -13,9 +13,9 @@ import java.beans.XMLEncoder;
 import java.io.*;
 import java.util.ArrayList;
 
-@CrossOrigin("http://localhost:4200")
 @RestController
-@RequestMapping()
+@CrossOrigin("http://localhost:4200")
+@RequestMapping("http://localhost:8080/api/v1/paint")
 public class PaintController {
 
     private final ShapeFactory shapeFactory = new ShapeFactory();
@@ -25,14 +25,16 @@ public class PaintController {
     private int previousY;
 
     @PostMapping("/create")
-    public void createShape(@RequestBody ApiShape apiShape){
+    public Object createShape(@RequestBody ApiShape apiShape){
+        System.out.println("HERE");
         Shape shape = (Shape) shapeFactory.createShape(apiShape.getShapeType(), apiShape.getStrokeSize(), apiShape.getColor(), apiShape.isFill(),
                 apiShape.getP1(), apiShape.getP2(), apiShape.getP3(), apiShape.getR1(), apiShape.getR2());
         dao.insertShape(shape);
+        return new Object();
     }
 
 
-    @GetMapping("/select")
+    @PostMapping("/select")
     public ArrayList<Shape> select(@RequestParam int mouseX, @RequestParam int mouseY){
         Point cursor = new Point(mouseX, mouseY);
         ArrayList<Shape> shapes = (ArrayList<Shape>) dao.findAll();
@@ -49,7 +51,7 @@ public class PaintController {
         return selected;
     }
 
-    @GetMapping("/draw")
+    @PostMapping("/draw")
     public ArrayList<Shape> draw(){
         return (ArrayList<Shape>) dao.findAll();
     }
@@ -112,17 +114,18 @@ public class PaintController {
         selected = new ArrayList<>();
     }
 
-    @GetMapping("/undo")
+    @PostMapping("/undo")
     public void undo(){
+        System.out.println("HERE");
         dao.previousState();
     }
 
-    @GetMapping("/redo")
+    @PostMapping("/redo")
     public void redo(){
         dao.nextState();
     }
 
-    @GetMapping("/save/XML")
+    @PostMapping("/save/XML")
     public void saveXML(){
         FileOutputStream fos = null;
         try {
@@ -138,7 +141,7 @@ public class PaintController {
         }
     }
 
-    @GetMapping("/load/XML")
+    @PostMapping("/load/XML")
     public void loadXML(){
         FileInputStream fis = null;
         try {
