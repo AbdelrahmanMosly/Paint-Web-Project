@@ -4,8 +4,8 @@
       <div class="actions">
         <button (click)="undo()">Undo</button>
         <button (click)="redo()">Redo</button>
-        <button>Save</button>
-        <button>Load</button>
+        <button (click)="save()">Save</button>
+        <button (click)="load()">Load</button>
       </div>
       <div class="shapes">
         <button [disabled]="buttons[0]" title="Select Shape" (click)="clicked('line')">Line</button>
@@ -30,8 +30,10 @@
         <button [disabled]="buttons[8]">Move</button>
         <button [disabled]="buttons[9]">Copy</button>
         <button [disabled]="buttons[10]">Delete</button>
+        <button [disabled]="isSelecting" (click)="toggleSelect()">Select</button>
+        
       </div>
     </div><br>
-    <canvas #canvas></canvas>
+    <canvas #canvas (click)="select()"></canvas>
   </div>
 </body>
