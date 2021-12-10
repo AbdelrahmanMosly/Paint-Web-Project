@@ -8,7 +8,7 @@ public class Triangle extends Shape{
     private Point p3;
 
     public Triangle(int strokeSize, String color, boolean filled, Point p1, Point p2, Point p3) {
-        super(strokeSize, color, filled);
+        super("Triangle", strokeSize, color, filled);
         this.p1 = p1;
         this.p2 = p2;
         this.p3 = p3;

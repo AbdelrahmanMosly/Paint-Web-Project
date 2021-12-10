@@ -4,38 +4,38 @@ import java.awt.*;
 
 public class Circle extends Shape{
 
-    private Point center;
-    private double radius;
+    private Point p1;
+    private double r1;
 
-    public Circle(int strokeSize, String color, boolean filled, Point center, double radius) {
-        super(strokeSize, color, filled);
-        this.center = center;
-        this.radius = radius;
+    public Circle(int strokeSize, String color, boolean filled, Point p1, double r1) {
+        super("Circle", strokeSize, color, filled);
+        this.p1 = p1;
+        this.r1 = r1;
     }
 
-    public Point getCenter() {
-        return center;
+    public Point getP1() {
+        return p1;
     }
 
-    public void setCenter(Point center) {
-        this.center = center;
+    public void setP1(Point p1) {
+        this.p1 = p1;
     }
 
-    public double getRadius() {
-        return radius;
+    public double getR1() {
+        return r1;
     }
 
-    public void setRadius(double radius) {
-        this.radius = radius;
+    public void setR1(double r1) {
+        this.r1 = r1;
     }
 
     public double distance(Point point){
-        return Math.sqrt(Math.pow(center.x-point.x,2)+Math.pow(center.y-point.y,2));
+        return Math.sqrt(Math.pow(p1.x-point.x,2)+Math.pow(p1.y-point.y,2));
     }
 
     @Override
     public boolean cursorOnShape(Point point) {
-        return distance(point) <= radius;
+        return distance(point) <= r1;
     }
 
     @Override
@@ -46,8 +46,8 @@ public class Circle extends Shape{
         }catch (CloneNotSupportedException e){
             throw e;
         }
-        clone.center = (Point) this.center.clone();
-        clone.radius = this.radius;
+        clone.p1 = (Point) this.p1.clone();
+        clone.r1 = this.r1;
 
         return clone;
     }
@@ -57,8 +57,8 @@ public class Circle extends Shape{
         Circle ret = null;
         try {
             ret = this.clone();
-            ret.center.x += x;
-            ret.center.y += y;
+            ret.p1.x += x;
+            ret.p1.y += y;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -71,7 +71,7 @@ public class Circle extends Shape{
         Circle ret = null;
         try {
             ret = this.clone();
-            ret.radius *= scale;
+            ret.r1 *= scale;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }

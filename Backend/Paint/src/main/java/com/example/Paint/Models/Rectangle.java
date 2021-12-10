@@ -7,7 +7,7 @@ public class Rectangle extends Shape {
     private Point p2;
 
     public Rectangle(int strokeSize, String color, boolean filled, Point p1, Point p2) {
-        super(strokeSize, color, filled);
+        super("Rectangle", strokeSize, color, filled);
         this.p1 = p1;
         this.p2 = p2;
     }
@@ -30,7 +30,7 @@ public class Rectangle extends Shape {
 
     @Override
     public boolean cursorOnShape(Point point) {
-        return point.x >= p1.x && point.y >=p1.y && point.x <= p2.x && point.y <= p2.y;
+        return point.x >= p1.x && point.y >=p1.y && point.x <= p1.x+p2.x && point.y <= p1.y+p2.y;
     }
 
     @Override

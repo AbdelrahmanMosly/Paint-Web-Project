@@ -22,8 +22,11 @@ export class AppComponent implements AfterViewInit{
   @ViewChild('lineWidth')
   lineWidth: ElementRef = {} as ElementRef;
   bounds: any;
+  frame: Array<Shape> = [];
+  isFrameLoaded: boolean = false;
   isDrawing: boolean = false;
   isSelecting: boolean = false;
+  isMoving: boolean = false;
   x1!: number;
   x2!: number;
   y1!: number;
@@ -43,10 +46,14 @@ export class AppComponent implements AfterViewInit{
     this.canvas.nativeElement.addEventListener('mousemove', this.drag.bind(this));
 
     this.canvas.nativeElement.addEventListener('mousedown', this.select.bind(this));
+
+    this.canvas.nativeElement.addEventListener('mousedown', this.moveStart.bind(this));
+    this.canvas.nativeElement.addEventListener('mousemove', this.moveDrag.bind(this));
+    
   }
 
   drawShape(sh: Shape){
-    switch(sh.shapeType){
+    switch(sh.shapeType.toLowerCase()){
       case "rectangle":
         this.drawRectangle(sh.p1.x, sh.p1.y, sh.p2.x, sh.p2.y);
         break;
@@ -70,30 +77,48 @@ export class AppComponent implements AfterViewInit{
     }
   }
 
+  getFrame(){
+    this.api.get("/draw").subscribe(
+      (shapes: Array<Shape>) =>{
+        this.frame = shapes;
+      },
+      error => {
+        
+      },
+      () => {
+        this.drawFrame();
+      });
+  }
+
   drawFrame(){
-    let shapes: Array<Shape> = JSON.parse(JSON.stringify(this.api.send("/draw", 0).subscribe()));
-    shapes.forEach((sh) => {
-      this.drawShape(sh);
-    })
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.frame.forEach(
+      (sh: Shape) => {
+        this.drawShape(sh);
+      }
+    )
   }
 
   toggleSelect(){
     this.isSelecting = !this.isSelecting;
   }
 
-  select(){
+  select(event : MouseEvent){
     if(this.isSelecting){
-      let shapes: Array<Shape> = JSON.parse(JSON.stringify(this.api.send("/select", 0).subscribe()));
+      let x = event.clientX - this.bounds.left;
+      let y = event.clientY - this.bounds.top;
+      this.api.post("/select", {x, y}).subscribe(
+        (shapes: Array<Shape>) =>
       shapes.forEach((sh) => {
         this.shape = sh;
-        switch(sh.shapeType){
+        switch(sh.shapeType.toLowerCase()){
           case "rectangle":
           case "square":
           case "line":
-            this.shape.p1.x = sh.p1.x - 5;
-            this.shape.p1.y = sh.p1.y - 5;
-            this.shape.p2.x = sh.p2.x + 5;
-            this.shape.p2.y = sh.p2.y + 5;
+            this.shape.p1.x = sh.p1.x + 5;
+            this.shape.p1.y = sh.p1.y + 5;
+            this.shape.p2.x = sh.p2.x - 5;
+            this.shape.p2.y = sh.p2.y - 5;
             break;
           case "triangle":
             this.shape.p1.x = sh.p1.x;
@@ -113,15 +138,23 @@ export class AppComponent implements AfterViewInit{
           case "pen":
             this.pen(this.x2, this.y2);
         }
-        this.api.send("/create", this.shape).subscribe();
-      });
+        this.drawShape(this.shape);
+      }
+      ));
     }
   }
 
   fillSwitch(){
     this.fill = !this.fill;
   }
+
+  toggleMove(){
+    this.isMoving = !this.isMoving;
+  }
+
   clicked(value: string){
+    this.isSelecting = false;
+    this.api.send("/deselect", 0);
     for (let i :number = 0; i < 11; i++) {
       this.buttons[i] = false;
     }
@@ -131,6 +164,9 @@ export class AppComponent implements AfterViewInit{
   }
 
   start(event : MouseEvent){
+    if(this.isSelecting || this.isMoving)
+      return;
+    this.getFrame();
     this.isDrawing = true;
     this.x1 = event.clientX - this.bounds.left;
     this.y1 = event.clientY - this.bounds.top;
@@ -138,19 +174,43 @@ export class AppComponent implements AfterViewInit{
   }
 
   drag(event : MouseEvent){
+    if(this.isSelecting || this.isMoving)
+      return;
     if(this.isDrawing){
-      this.undo();
+      this.drawFrame();
       this.x2 = event.clientX - this.bounds.left;
       this.y2 = event.clientY - this.bounds.top;
-      this.shape = new Shape(this.action, this.lineWidth.nativeElement.value, this.color.nativeElement.value, this.fill, this.dummyPoint, this.dummyPoint, this.dummyPoint, 0, 0);
+      this.shape = new Shape(this.action, this.lineWidth.nativeElement.value, this.color.nativeElement.value, this.fill, new Point(0 ,0), new Point(0 ,0), new Point(0 ,0), 0, 0);
       switch(this.action){
-        case "rectangle":
-        case "square":
         case "line":
           this.shape.p1.x = this.x1;
           this.shape.p1.y = this.y1;
           this.shape.p2.x = this.x2;
           this.shape.p2.y = this.y2;
+          break;
+        case "square":
+          let x = this.x1;
+          let y = this.y1;
+          let w = this.x2 - this.x1;
+          let h = this.y2 - this.y1;
+          if(w != h){
+            if(Math.abs(w) > Math.abs(h)){
+              w = h * Math.sign(h) * Math.sign(w);
+            }
+            else{
+              h = w * Math.sign(w) * Math.sign(h);
+            }
+          }
+          this.shape.p1.x = x;
+          this.shape.p1.y = y;
+          this.shape.p2.x = w;
+          this.shape.p2.y = h;
+          break;
+        case "rectangle":
+          this.shape.p1.x = this.x1;
+          this.shape.p1.y = this.y1;
+          this.shape.p2.x = this.x2 - this.x1;
+          this.shape.p2.y = this.y2 - this.y1;
           break;
         case "triangle":
           this.shape.p1.x = this.x1;
@@ -174,12 +234,21 @@ export class AppComponent implements AfterViewInit{
         case "pen":
           this.pen(this.x2, this.y2);
       }
-      this.api.send("/create", this.shape).subscribe();
+      this.drawShape(this.shape);
     }
   }
 
   end(event : MouseEvent){
+    if(this.isSelecting || this.isMoving)
+      return;
     this.isDrawing = false;
+    this.api.send("/create", this.shape).subscribe(
+      () => {},
+      () => {},
+      () =>{
+        this.getFrame();
+      }
+    );
   }
 
   drawLine(x1: number, y1: number, x2: number, y2: number){
@@ -263,19 +332,111 @@ export class AppComponent implements AfterViewInit{
   }
 
   undo(){
-    this.api.send("/undo", 0).subscribe();
+    this.api.send("/undo", 0).subscribe(
+      () => {},
+      () => {},
+      () =>{
+        this.getFrame();
+        this.drawFrame();
+      }
+    )
   }
 
   redo(){
-    this.api.send("/redo", 0).subscribe();
+    this.api.send("/redo", 0).subscribe(
+      () => {},
+      () => {},
+      () =>{
+        this.getFrame();
+        this.drawFrame();
+      }
+    )
   }
 
   save(){
-    this.api.send("/save", 0).subscribe();
+    this.api.send("/save", 0).subscribe(
+      () => {},
+      () => {},
+      () =>{
+        this.getFrame();
+        this.drawFrame();
+      }
+    )
   }
 
   load(){
-    this.api.send("/load", 0).subscribe();
+    this.api.send("/load", 0).subscribe(
+      () => {},
+      () => {},
+      () =>{
+        this.getFrame();
+        this.drawFrame();
+      });
   }
   
+  clear(){
+    this.api.send("/clear", 0).subscribe(
+      () => {},
+      () => {},
+      () =>{
+        this.getFrame();
+        this.drawFrame();
+      });
+  }
+
+  resize(){
+    this.api.send("/resize", 0).subscribe(
+      () => {},
+      () => {},
+      () =>{
+        this.getFrame();
+        this.drawFrame();
+      });
+  }
+
+  move(){
+    this.api.send("/move", 0).subscribe(
+      () => {},
+      () => {},
+      () =>{
+        this.getFrame();
+        this.drawFrame();
+      });
+  }
+
+  copy(){
+    this.api.send("/copy", 0).subscribe(
+      () => {},
+      () => {},
+      () =>{
+        this.getFrame();
+        this.drawFrame();
+      });
+  }
+
+  delete(){
+    this.api.send("/delete", 0).subscribe(
+      () => {},
+      () => {},
+      () =>{
+        this.getFrame();
+        this.drawFrame();
+      });
+  }
+
+  moveStart(event: MouseEvent){
+    if(!this.isMoving)
+      return;
+    let x = event.clientX - this.bounds.left;
+    let y = event.clientY - this.bounds.top;
+    this.api.send("/setInitialPosition", {x, y}).subscribe();
+  }
+
+  moveDrag(event: MouseEvent){
+    if(!this.isMoving)
+      return;
+    let x = event.clientX - this.bounds.left;
+    let y = event.clientY - this.bounds.top;
+    this.api.send("/doAction", {x, y}).subscribe();
+  }
 }

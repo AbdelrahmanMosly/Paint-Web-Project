@@ -3,47 +3,47 @@ package com.example.Paint.Models;
 import java.awt.*;
 
 public class Line extends Shape{
-    private Point start;
-    private Point end;
+    private Point p1;
+    private Point p2;
     private final double eps = 1e-6;
 
-    public Line(int strokeSize, String color, boolean filled, Point start, Point end) {
-        super(strokeSize, color, filled);
-        this.start = start;
-        this.end = end;
+    public Line(int strokeSize, String color, boolean filled, Point p1, Point p2) {
+        super("Line", strokeSize, color, filled);
+        this.p1 = p1;
+        this.p2 = p2;
     }
 
-    public Point getStart() {
-        return start;
+    public Point getP1() {
+        return p1;
     }
 
-    public void setStart(Point start) {
-        this.start = start;
+    public void setP1(Point p1) {
+        this.p1 = p1;
     }
 
-    public Point getEnd() {
-        return end;
+    public Point getP2() {
+        return p2;
     }
 
-    public void setEnd(Point end) {
-        this.end = end;
+    public void setP2(Point p2) {
+        this.p2 = p2;
     }
 
-    private boolean betweenEndpoints(Point point){
-        return point.x>=Math.min(start.x,end.x) && point.x<=Math.max(start.x,end.x)
-               && point.y>=Math.min(start.y,end.y) && point.y<=Math.max(start.y,end.y);
+    private boolean betweenp2points(Point point){
+        return point.x>=Math.min(p1.x,p2.x) && point.x<=Math.max(p1.x,p2.x)
+               && point.y>=Math.min(p1.y,p2.y) && point.y<=Math.max(p1.y,p2.y);
     }
     private boolean onSameSlope(Point point){
-        if(point == start || point == end)
+        if(point == p1 || point == p2)
             return true;
-        if(point.x == start.x || point.x == end.x)
-            return start.x == end.x;
-        return ( ((double)(end.y-point.y)/(end.x-point.x)) - ((double)(point.y-start.y)/(point.x-start.x)) ) <= eps;
+        if(point.x == p1.x || point.x == p2.x)
+            return p1.x == p2.x;
+        return ( ((double)(p2.y-point.y)/(p2.x-point.x)) - ((double)(point.y-p1.y)/(point.x-p1.x)) ) <= eps;
     }
 
     @Override
     public boolean cursorOnShape(Point point) {
-        return betweenEndpoints(point) && onSameSlope(point);
+        return betweenp2points(point) && onSameSlope(point);
     }
 
     @Override
@@ -54,8 +54,8 @@ public class Line extends Shape{
         }catch (CloneNotSupportedException e){
             throw e;
         }
-        clone.start = (Point) this.start.clone();
-        clone.end = (Point) this.end.clone();
+        clone.p1 = (Point) this.p1.clone();
+        clone.p2 = (Point) this.p2.clone();
 
         return clone;
     }
@@ -65,10 +65,10 @@ public class Line extends Shape{
         Line ret = null;
         try {
             ret = this.clone();
-            ret.start.x += x;
-            ret.start.y += y;
-            ret.end.x += x;
-            ret.end.y += y;
+            ret.p1.x += x;
+            ret.p1.y += y;
+            ret.p2.x += x;
+            ret.p2.y += y;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }

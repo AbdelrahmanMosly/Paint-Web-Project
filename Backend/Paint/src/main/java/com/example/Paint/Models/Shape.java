@@ -3,14 +3,26 @@ package com.example.Paint.Models;
 import java.awt.*;
 
 public abstract class Shape implements IShape, Cloneable{
+    private String shapeType;
     private int strokeSize;
     private String color;
     private boolean filled;
 
-    public Shape(int strokeSize, String color, boolean filled) {
+    public Shape(String shapeType, int strokeSize, String color, boolean filled) {
+        this.shapeType = shapeType;
         this.strokeSize = strokeSize;
         this.color = color;
         this.filled = filled;
+    }
+
+    @Override
+    public String getShapeType() {
+        return shapeType;
+    }
+
+    @Override
+    public void setShapeType(String shapeType) {
+        this.shapeType = shapeType;
     }
 
     @Override
