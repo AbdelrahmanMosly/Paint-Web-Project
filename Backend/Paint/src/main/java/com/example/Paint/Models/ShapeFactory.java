@@ -1,7 +1,6 @@
 package com.example.Paint.Models;
 
 import java.awt.*;
-import java.awt.Shape;
 
 public class ShapeFactory {
     public Shape createShape(String shapeType, int strokeSize, String color, boolean fill,
@@ -9,17 +8,17 @@ public class ShapeFactory {
         if(shapeType==null)
             return null;
         if(shapeType.equalsIgnoreCase("LINE"))
-            return (Shape) new Line(strokeSize ,color, fill, p1, p2);
+            return new Line(strokeSize ,color, fill, p1, p2);
         if(shapeType.equalsIgnoreCase("RECTANGLE"))
-            return (Shape) new Rectangle(strokeSize ,color, fill, p1, p2);
+            return new Rectangle(strokeSize ,color, fill, p1, p2);
         if(shapeType.equalsIgnoreCase("SQUARE"))
-            return (Shape) new Square(strokeSize ,color, fill, p1, p2);
+            return new Square(strokeSize ,color, fill, p1, p2);
         if(shapeType.equalsIgnoreCase("TRIANGLE"))
-            return (Shape) new Triangle(strokeSize ,color, fill, p1, p2, p3);
+            return new Triangle(strokeSize ,color, fill, p1, p2, p3);
         if(shapeType.equalsIgnoreCase("ELLIPSE"))
-            return (Shape) new Ellipse(strokeSize ,color, fill, p1, r1, r2);
+            return new Ellipse(strokeSize ,color, fill, p1, r1, r2);
         if(shapeType.equalsIgnoreCase("CIRCLE"))
-            return (Shape) new Circle(strokeSize ,color, fill, p1, r1);
+            return new Circle(strokeSize ,color, fill, p1, r1);
 
 
 

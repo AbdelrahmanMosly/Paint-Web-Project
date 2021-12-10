@@ -16,7 +16,7 @@ public class Freehand extends Shape{
     }
 
     public Freehand(int strokeSize, String color, boolean filled) {
-        super(strokeSize, color, filled);
+        super("Freehand", strokeSize, color, filled);
     }
 
     @Override

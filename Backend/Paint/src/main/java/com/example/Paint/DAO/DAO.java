@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Stack;
 
 public class DAO implements IDAO{
-    private ArrayList<Shape> db;
-    private Stack<ArrayList<Shape>> stackUndo;
-    private Stack<ArrayList<Shape>> stackRedo;
+    private ArrayList<Shape> db = new ArrayList<>();
+    private Stack<ArrayList<Shape>> stackUndo = new Stack<>();
+    private Stack<ArrayList<Shape>> stackRedo = new Stack<>();
 
     public ArrayList<Shape> getDb() {
         return db;
@@ -76,8 +76,8 @@ public class DAO implements IDAO{
 
     public void nextState(){
         try{
-            db = stackRedo.pop();
             stackUndo.push((ArrayList<Shape>) db.clone());
+            db = (ArrayList<Shape>) stackRedo.pop().clone();
         }catch(EmptyStackException e){
             System.err.println("nextState Empty Stack");
         }
@@ -85,8 +85,8 @@ public class DAO implements IDAO{
 
     public void previousState(){
         try{
-            db = stackUndo.pop();
-            stackRedo.push((ArrayList<Shape>) db.clone());
+            db = (ArrayList<Shape>) stackUndo.peek().clone();
+            stackRedo.push((ArrayList<Shape>) stackUndo.pop().clone());
         }catch(EmptyStackException e){
             System.err.println("previousState Empty Stack");
         }

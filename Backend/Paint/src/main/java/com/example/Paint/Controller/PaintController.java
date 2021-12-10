@@ -6,6 +6,7 @@ import com.example.Paint.Models.Shape;
 import com.example.Paint.Models.ShapeFactory;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
 import javax.xml.crypto.dsig.XMLObject;
 import java.awt.*;
 import java.beans.XMLDecoder;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 
 @RestController
 @CrossOrigin("http://localhost:4200")
-@RequestMapping("http://localhost:8080/api/v1/paint")
+@RequestMapping("/api/v1/paint")
 public class PaintController {
 
     private final ShapeFactory shapeFactory = new ShapeFactory();
@@ -25,33 +26,34 @@ public class PaintController {
     private int previousY;
 
     @PostMapping("/create")
-    public Object createShape(@RequestBody ApiShape apiShape){
-        System.out.println("HERE");
-        Shape shape = (Shape) shapeFactory.createShape(apiShape.getShapeType(), apiShape.getStrokeSize(), apiShape.getColor(), apiShape.isFill(),
-                apiShape.getP1(), apiShape.getP2(), apiShape.getP3(), apiShape.getR1(), apiShape.getR2());
-        dao.insertShape(shape);
-        return new Object();
+    public void createShape(@RequestBody ApiShape apiShape){
+        try {
+            Shape shape = (Shape) shapeFactory.createShape(apiShape.getShapeType(), apiShape.getStrokeSize(), apiShape.getColor(), apiShape.isFill(),
+                    apiShape.getP1(), apiShape.getP2(), apiShape.getP3(), apiShape.getR1(), apiShape.getR2());
+            if(shape != null) {
+                dao.insertShape(shape);
+                dao.maintainState();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
     @PostMapping("/select")
-    public ArrayList<Shape> select(@RequestParam int mouseX, @RequestParam int mouseY){
-        Point cursor = new Point(mouseX, mouseY);
+    public ArrayList<Shape> select(@RequestBody Point cursor){
+
         ArrayList<Shape> shapes = (ArrayList<Shape>) dao.findAll();
 
         for (Shape currentShape : shapes) {
-            if (currentShape.cursorOnShape(cursor)) {
-                if (!selected.contains(currentShape))
-                    selected.add(currentShape);
-                else
-                    selected.remove(currentShape);
-            }
+            if (currentShape.cursorOnShape(cursor))
+                selected.add(currentShape);
         }
 
         return selected;
     }
 
-    @PostMapping("/draw")
+    @GetMapping("/draw")
     public ArrayList<Shape> draw(){
         return (ArrayList<Shape>) dao.findAll();
     }
@@ -72,17 +74,18 @@ public class PaintController {
             nextSelected.add(newShape);
         }
         selected = nextSelected;
+        dao.maintainState();
     }
 
-    @PostMapping("/move/setInitialPosition")
-    public void setInitial(@RequestBody int mouseX, @RequestBody int mouseY){
-        previousX = mouseX;
-        previousY = mouseY;
+    @PostMapping("/setInitialPosition")
+    public void setInitial(@RequestBody Point point){
+        previousX = point.x;
+        previousY = point.y;
     }
-    @PostMapping("/move/doAction")
-    public void move(@RequestBody int mouseX, @RequestBody int mouseY){
-        int diffX = mouseX - previousX;
-        int diffY = mouseY - previousY;
+    @PostMapping("/doAction")
+    public void move(@RequestBody Point point){
+        int diffX = point.x - previousX;
+        int diffY = point.y - previousY;
 
         ArrayList<Shape> nextSelected = new ArrayList<>();
         for (Shape currentShape : selected) {
@@ -93,8 +96,10 @@ public class PaintController {
         }
         selected = nextSelected;
 
-        previousX = mouseX;
-        previousY = mouseY;
+        previousX = point.x;
+        previousY = point.y;
+
+        dao.maintainState();
     }
 
     @PostMapping("/copy")
@@ -104,6 +109,7 @@ public class PaintController {
             Shape newShape = (Shape) currentShape.move(5, 5);
             dao.insertShape(newShape);
         }
+        dao.maintainState();
     }
 
     @PostMapping("/delete")
@@ -116,7 +122,6 @@ public class PaintController {
 
     @PostMapping("/undo")
     public void undo(){
-        System.out.println("HERE");
         dao.previousState();
     }
 
@@ -155,4 +160,15 @@ public class PaintController {
         }
     }
 
+
+    @PostMapping("/clear")
+    public void clear(){
+        selected.clear();
+        dao.setDb(new ArrayList<>());
+    }
+
+    @PostMapping("/deselect")
+    public void deselect(){
+        selected.clear();
+    }
 }
