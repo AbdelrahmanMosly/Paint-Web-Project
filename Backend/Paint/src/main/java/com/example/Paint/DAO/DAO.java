@@ -12,7 +12,9 @@ public class DAO implements IDAO{
     private ArrayList<Shape> db = new ArrayList<>();
     private Stack<ArrayList<Shape>> stackUndo = new Stack<>();
     private Stack<ArrayList<Shape>> stackRedo = new Stack<>();
-
+    public DAO (){
+        stackUndo.push((ArrayList<Shape>) db.clone());
+    }
     public ArrayList<Shape> getDb() {
         return db;
     }
@@ -71,13 +73,28 @@ public class DAO implements IDAO{
     }
 
     public void maintainState(){
+        System.out.println("maintain");
+        stackUndo.push((ArrayList<Shape>) db.clone());
+        stackRedo.clear();
+    }
+    public void undoReset(){
+        stackUndo.clear();
+        db.clear();
         stackUndo.push((ArrayList<Shape>) db.clone());
     }
-
+    public void redoReset(){
+        stackRedo.clear();
+    }
     public void nextState(){
         try{
-            stackUndo.push((ArrayList<Shape>) db.clone());
-            db = (ArrayList<Shape>) stackRedo.pop().clone();
+
+            db = (ArrayList<Shape>) stackRedo.peek().clone();
+            System.out.println("Redo");
+            for(Shape currentShape : db){
+                System.out.println(currentShape.getShapeType());
+            }
+            stackUndo.push((ArrayList<Shape>) stackRedo.pop().clone());
+
         }catch(EmptyStackException e){
             System.err.println("nextState Empty Stack");
         }
@@ -86,6 +103,10 @@ public class DAO implements IDAO{
     public void previousState(){
         try{
             db = (ArrayList<Shape>) stackUndo.peek().clone();
+            System.out.println("Undo");
+            for(Shape currentShape : db){
+                System.out.println(currentShape.getShapeType());
+            }
             stackRedo.push((ArrayList<Shape>) stackUndo.pop().clone());
         }catch(EmptyStackException e){
             System.err.println("previousState Empty Stack");

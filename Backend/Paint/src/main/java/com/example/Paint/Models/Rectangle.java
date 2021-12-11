@@ -39,8 +39,6 @@ public class Rectangle extends Shape {
             this.p2.y*=-1;
             this.p1.y-=this.p2.y;
         }
-        System.out.println(this.p1.x +" "+this.p1.y);
-        System.out.println(this.p2.x +" "+this.p2.y);
     }
     @Override
     public boolean cursorOnShape(Point point) {
@@ -84,8 +82,6 @@ public class Rectangle extends Shape {
             ret = this.clone();
             ret.p2.x += x;
             ret.p2.y += y;
-            System.out.println(ret.p1.x +" "+ret.p1.y);
-            System.out.println(ret.p2.x +" "+ret.p2.y);
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -102,7 +98,5 @@ public class Rectangle extends Shape {
             this.p2.y*=-1;
             this.p1.y-=this.p2.y;
         }
-        System.out.println(this.p1.x +" "+this.p1.y);
-        System.out.println(this.p2.x +" "+this.p2.y);
     }
 }

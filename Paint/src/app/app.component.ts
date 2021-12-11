@@ -30,6 +30,8 @@ export class AppComponent implements AfterViewInit{
   isMoveStart: boolean = false;
   isResizing: boolean = false;
   isResizeStart: boolean = false;
+  isUndone: boolean = false;
+  isRedone: boolean = false;
   x1!: number;
   x2!: number;
   y1!: number;
@@ -58,8 +60,9 @@ export class AppComponent implements AfterViewInit{
     this.canvas.nativeElement.addEventListener('mousedown', this.resizeStart.bind(this));
     this.canvas.nativeElement.addEventListener('mousemove', this.resizeDrag.bind(this)); 
     this.canvas.nativeElement.addEventListener('mouseup', this.resizeEnd.bind(this));
-
     
+    this.clear();
+
     
   }
   
@@ -138,7 +141,6 @@ export class AppComponent implements AfterViewInit{
         elem.style.color = "blue";
     }
 
-    
   }
 
   select(event : MouseEvent){
@@ -302,6 +304,8 @@ export class AppComponent implements AfterViewInit{
   }
 
   end(event : MouseEvent){
+    this.isRedone=false;
+    this.isUndone=false;
     if(this.isSelecting || this.isMoving)
       return;
     this.isDrawing = false;
@@ -395,28 +399,28 @@ export class AppComponent implements AfterViewInit{
   }
 
   undo(){
-    this.api.send("/undo", 0).subscribe(
-      () => {},
-      () => {},
-      () =>{
-        this.getFrame();
-        this.drawFrame();
-      }
-    )
+    if(!this.isUndone){
+      this.api.send("/undo", 0).subscribe();
+      this.isUndone=true;
+    }
+    this.api.send("/undo", 0).subscribe();
+    this.getFrame();
+    this.drawFrame();
   }
 
   redo(){
-    this.api.send("/redo", 0).subscribe(
-      () => {},
-      () => {},
-      () =>{
-        this.getFrame();
-        this.drawFrame();
-      }
-    )
+  if(!this.isRedone){
+    this.api.send("/redo", 0).subscribe();
+    this.isRedone=true;
+  }
+    this.api.send("/redo", 0).subscribe();
+    this.getFrame();
+    this.drawFrame();
   }
 
   save(){
+    this.isRedone=false;
+    this.isUndone=false;
     this.api.send("/save", 0).subscribe(
       () => {},
       () => {},
@@ -428,6 +432,8 @@ export class AppComponent implements AfterViewInit{
   }
 
   load(){
+    this.isRedone=false;
+    this.isUndone=false;
     this.api.send("/load", 0).subscribe(
       () => {},
       () => {},
@@ -438,6 +444,8 @@ export class AppComponent implements AfterViewInit{
   }
   
   clear(){
+    this.isRedone=false;
+    this.isUndone=false;
     this.api.send("/clear", 0).subscribe(
       () => {},
       () => {},
@@ -468,6 +476,8 @@ export class AppComponent implements AfterViewInit{
   }
 */
   copy(){
+    this.isRedone=false;
+    this.isUndone=false;
     this.api.send("/copy", 0).subscribe(
       () => {},
       () => {},
@@ -478,6 +488,8 @@ export class AppComponent implements AfterViewInit{
   }
 
   delete(){
+    this.isRedone=false;
+    this.isUndone=false;
     this.api.send("/delete", 0).subscribe(
       () => {},
       () => {},
@@ -532,6 +544,8 @@ export class AppComponent implements AfterViewInit{
     if(!this.isResizing || !this.isSelecting)
       return;
     this.isResizeStart=true;
+    this.isRedone=false;
+    this.isUndone=false;
     let x = event.clientX - this.bounds.left;
     let y = event.clientY - this.bounds.top;
     this.api.send("/setInitialPosition", {x, y}).subscribe();

@@ -12,6 +12,7 @@ import java.awt.*;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
+import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
 
 @RestController
@@ -78,6 +79,7 @@ public class PaintController {
     }
     @PostMapping("/endResizing")
     public void endResize(){
+
         for (Shape currentShape : selected) {
             currentShape.maintainResizeSelection();
             dao.insertShape(currentShape);
@@ -98,6 +100,7 @@ public class PaintController {
         ArrayList<Shape> nextSelected = new ArrayList<>();
         for (Shape currentShape : selected) {
             Shape newShape = (Shape) currentShape.move(diffX, diffY);
+            System.out.println(newShape.getShapeType());
             dao.deleteShape(currentShape);
             nextSelected.add(newShape);
         }
@@ -108,6 +111,7 @@ public class PaintController {
     }
     @PostMapping("/endAction")
     public void endMove(){
+
         for (Shape currentShape : selected) {
             dao.insertShape(currentShape);
         }
@@ -128,6 +132,7 @@ public class PaintController {
     @PostMapping("/copy")
     public void copy(){
         ArrayList<Shape> nextSelected = new ArrayList<>();
+
         for (Shape currentShape : selected) {
             Shape newShape = (Shape) currentShape.move(20, 20);
             dao.insertShape(newShape);
@@ -140,6 +145,7 @@ public class PaintController {
         for (Shape currentShape : selected) {
             dao.deleteShape(currentShape);
         }
+        dao.maintainState();
         selected = new ArrayList<>();
     }
 
@@ -187,6 +193,8 @@ public class PaintController {
     @PostMapping("/clear")
     public void clear(){
         selected.clear();
+        dao.undoReset();
+        dao.redoReset();
         dao.setDb(new ArrayList<>());
     }
 
