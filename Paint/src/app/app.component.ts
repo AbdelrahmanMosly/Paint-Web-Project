@@ -69,6 +69,9 @@ export class AppComponent implements AfterViewInit{
   
 
   drawShape(sh: Shape){
+    this.shape.shapeType = sh.shapeType;
+    this.shape.filled = sh.filled;
+    this.shape.color = sh.color;
     switch(sh.shapeType.toLowerCase()){
       case "rectangle":
         this.drawRectangle(sh.p1.x, sh.p1.y, sh.p2.x, sh.p2.y);
@@ -186,6 +189,12 @@ export class AppComponent implements AfterViewInit{
 
   fillSwitch(){
     this.fill = !this.fill;
+    var newColor = "blue";
+    if(this.fill)
+      newColor = "red";
+    var button = document.getElementById("fillButton");
+    if(button)
+      button.style.color = newColor;
   }
 
   toggleMove(){
@@ -309,6 +318,7 @@ export class AppComponent implements AfterViewInit{
     if(this.isSelecting || this.isMoving)
       return;
     this.isDrawing = false;
+    console.log(this.shape.filled);
     this.api.send("/create", this.shape).subscribe(
       () => {},
       () => {},
@@ -348,12 +358,12 @@ export class AppComponent implements AfterViewInit{
 
   drawRectangle(x: number, y: number, w: number, h: number){
     this.ctx.lineWidth = this.lineWidth.nativeElement.value;
-    if(this.fill){
-      this.ctx.fillStyle = this.color.nativeElement.value;
+    if(this.shape.filled){
+      this.ctx.fillStyle = this.shape.color;
       this.ctx.fillRect(x, y, w, h);
     }
     else{
-      this.ctx.strokeStyle = this.color.nativeElement.value;
+      this.ctx.strokeStyle = this.shape.color;
       this.ctx.strokeRect(x, y, w, h);
     }
   }
@@ -372,12 +382,12 @@ export class AppComponent implements AfterViewInit{
 
   draw(){
     this.ctx.lineWidth = this.lineWidth.nativeElement.value;
-    if(this.fill && this.action != "line"){
-      this.ctx.fillStyle = this.color.nativeElement.value;
+    if(this.shape.filled && this.shape.shapeType.toLowerCase() != "line"){
+      this.ctx.fillStyle = this.shape.color;
       this.ctx.fill();
     }
     else{
-      this.ctx.strokeStyle = this.color.nativeElement.value;
+      this.ctx.strokeStyle = this.shape.color;
       this.ctx.stroke();
     }
   }
@@ -399,6 +409,7 @@ export class AppComponent implements AfterViewInit{
   }
 
   undo(){
+    this.isRedone = false;
     if(!this.isUndone){
       this.api.send("/undo", 0).subscribe();
       this.isUndone=true;
@@ -409,6 +420,7 @@ export class AppComponent implements AfterViewInit{
   }
 
   redo(){
+  this.isUndone = false;
   if(!this.isRedone){
     this.api.send("/redo", 0).subscribe();
     this.isRedone=true;
