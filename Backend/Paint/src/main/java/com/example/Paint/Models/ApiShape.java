@@ -6,7 +6,7 @@ public class ApiShape {
     private String shapeType;
     private int strokeSize;
     private String color;
-    private boolean fill;
+    private boolean filled;
     private Point p1;
     private Point p2;
     private Point p3;
@@ -37,12 +37,12 @@ public class ApiShape {
         this.color = color;
     }
 
-    public boolean isFill() {
-        return fill;
+    public boolean getFilled() {
+        return filled;
     }
 
-    public void setFill(boolean fill) {
-        this.fill = fill;
+    public void setFilled(boolean filled) {
+        this.filled = filled;
     }
 
     public Point getP1() {

@@ -30,7 +30,7 @@ public class PaintController {
     @PostMapping("/create")
     public void createShape(@RequestBody ApiShape apiShape){
         try {
-            Shape shape = (Shape) shapeFactory.createShape(apiShape.getShapeType(), apiShape.getStrokeSize(), apiShape.getColor(), apiShape.isFill(),
+            Shape shape = (Shape) shapeFactory.createShape(apiShape.getShapeType(), apiShape.getStrokeSize(), apiShape.getColor(), apiShape.getFilled(),
                     apiShape.getP1(), apiShape.getP2(), apiShape.getP3(), apiShape.getR1(), apiShape.getR2());
             if(shape != null) {
                 dao.insertShape(shape);

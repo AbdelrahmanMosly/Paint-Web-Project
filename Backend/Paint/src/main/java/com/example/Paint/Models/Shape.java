@@ -53,7 +53,7 @@ public abstract class Shape implements IShape, Cloneable{
 
     @Override
     public boolean getFilled() {
-        return false;
+        return filled;
     }
 
     @Override
