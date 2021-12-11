@@ -89,6 +89,18 @@ export class AppComponent implements AfterViewInit{
         this.pen(this.x2, this.y2);
     }
   }
+  getActionFrame(){
+    this.api.get("/actionsDraw").subscribe(
+      (shapes: Array<Shape>) =>{
+        this.frame = shapes;
+      },
+      error => {
+        
+      },
+      () => {
+        this.drawFrame();
+      });
+  }
 
   getFrame(){
     this.api.get("/draw").subscribe(
@@ -492,7 +504,13 @@ export class AppComponent implements AfterViewInit{
     let x = event.clientX - this.bounds.left;
     let y = event.clientY - this.bounds.top;
     if(x>=0 &&y>=0){
-      this.api.send("/doAction", {x, y}).subscribe();
+      this.api.send("/doAction", {x, y}).subscribe(
+        () => {},
+        () => {},
+        () =>{
+          this.getActionFrame();
+          this.drawFrame();
+        });
     }
   }
 
@@ -526,7 +544,13 @@ export class AppComponent implements AfterViewInit{
     let x = event.clientX - this.bounds.left;
     let y = event.clientY - this.bounds.top;
     if(x>=0 &&y>=0){
-      this.api.send("/resize", {x, y}).subscribe();
+      this.api.send("/resize", {x, y}).subscribe(
+        () => {},
+        () => {},
+        () =>{
+          this.getActionFrame();
+          this.drawFrame();
+        });
     }
   }
 

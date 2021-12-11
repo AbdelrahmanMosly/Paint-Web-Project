@@ -114,6 +114,17 @@ public class PaintController {
         dao.maintainState();
         deselect();
     }
+
+    @GetMapping("/actionsDraw")
+    public ArrayList<Shape> actionDraw(){
+        ArrayList<Shape> ret=new ArrayList<Shape>(dao.findAll());
+        for (Shape currentShape : selected) {
+            ret.add(currentShape);
+        }
+
+        return ret;
+    }
+
     @PostMapping("/copy")
     public void copy(){
         ArrayList<Shape> nextSelected = new ArrayList<>();
