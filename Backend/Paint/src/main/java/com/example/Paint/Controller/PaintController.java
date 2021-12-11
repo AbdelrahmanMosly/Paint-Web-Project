@@ -10,19 +10,26 @@ import org.json.JSONObject;
 import org.json.XML;
 
 import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
+import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.crypto.dsig.XMLObject;
 import java.awt.*;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
 import java.lang.management.ThreadInfo;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Stack;
 
 @RestController
 @CrossOrigin("http://localhost:4200")
@@ -111,7 +118,6 @@ public class PaintController {
         ArrayList<Shape> nextSelected = new ArrayList<>();
         for (Shape currentShape : selected) {
             Shape newShape = (Shape) currentShape.move(diffX, diffY);
-            System.out.println(newShape.getShapeType());
             dao.deleteShape(currentShape);
             nextSelected.add(newShape);
         }
@@ -187,12 +193,11 @@ public class PaintController {
         if(dao.findAll().size()==0)
             return "{}" ;
         ArrayList<Shape> objects=new ArrayList<Shape>(dao.findAll());
-        System.out.println(gson.toJson(objects));
         return gson.toJson(objects);
     }
 
-    @PostMapping("save")
-    public void saveXML() throws JSONException {
+    @PostMapping("/save")
+    public void saveXML() {
 
         boolean isJasonExtension;
         JFileChooser fileChooser = new JFileChooser();
@@ -204,54 +209,47 @@ public class PaintController {
 
         int userSelection = fileChooser.showSaveDialog(new JFrame());
         if(userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = fileChooser.getSelectedFile();
-            String file = ((File) fileToSave).getAbsolutePath();
+            String file = fileChooser.getSelectedFile().getAbsolutePath();
             if(fileChooser.getFileFilter().equals(filter)) {
                 if (!file.endsWith(".json"))
-                    file = new String(file + ".json");
-                isJasonExtension = true;
-            }
-            else {
-                if(!file.endsWith(".xml"))
-                    file = new String(file + ".xml");
-                isJasonExtension = false;
-            }
+                    file = file + ".json";
 
-            try {
-                File myObj = new File(file);
-                if(myObj.createNewFile())
-                    System.out.println("File Saved at : " + myObj.getName());
-                else
-                    System.out.println("File Exists");
-            } catch (IOException e) {
-                System.out.println("ERROR");
-                e.printStackTrace();
-                return;
-            }
-
-            if(isJasonExtension) {
                 try {
                     FileWriter writer = new FileWriter(file);
                     writer.write(this.stringfyJason());
                     writer.close();
                 } catch (IOException e) {
-                    System.out.println("ERROR");
                     e.printStackTrace();
                 }
+            }
+            else {
+                if(!file.endsWith(".xml"))
+                    file = file + ".xml";
 
+                try
+                {
+                    JAXBContext jaxbContext = JAXBContext.newInstance(ArrayList.class);
+
+                    Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+                    jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+                    StringWriter sw = new StringWriter();
+
+                    jaxbMarshaller.marshal(dao.getDb(), sw);
+
+                    String xmlContent = sw.toString();
+
+                } catch (JAXBException e) {
+                    e.printStackTrace();
+                }
             }
 
-            else {
-                JSONObject json = new JSONObject(this.stringfyJason());
-                String xml = XML.toString(json);
-                try {
-                    FileWriter writer = new FileWriter(file);
-                    writer.write(xml);
-                    writer.close();
-                } catch (IOException e) {
-                    System.out.println("ERROR");
-                    e.printStackTrace();
-                }
+            try {
+                File newFile = new File(file);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
             }
         }
     }
@@ -260,35 +258,43 @@ public class PaintController {
 
     @PostMapping("/load")
 
-    public String load() throws FileNotFoundException, JSONException{
-        JSONObject json;
+    public void load() throws FileNotFoundException {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Load Path");
         fileChooser.setAcceptAllFileFilterUsed(false);
         FileNameExtensionFilter filter = new FileNameExtensionFilter("XML and JSON files", "xml", "json");
         fileChooser.addChoosableFileFilter(filter);
         int result = fileChooser.showOpenDialog(new JFrame());
-        if(result == JFileChooser.APPROVE_OPTION) {
+        if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             String file = selectedFile.getAbsolutePath();
-            if(file.endsWith(".json")) {
-                Scanner myReader = new Scanner(selectedFile);
-                while(myReader.hasNextLine()) {
-                    this.load = myReader.nextLine();
+            if (file.endsWith(".json")) {
+                Scanner scan = new Scanner(selectedFile);
+                while (scan.hasNextLine()) {
+                    this.load = scan.nextLine();
                 }
-                myReader.close();
-            }
-            else {
-                Scanner myReader = new Scanner(selectedFile);
-                while(myReader.hasNextLine()) {
-                    json = XML.toJSONObject(myReader.nextLine());
-                    load = json.toString();
-                }
-                myReader.close();
-            }
-        }
-        System.out.println(this.load);
-        return this.load;
-    }
+                scan.close();
+                dao.setDb((ArrayList<Shape>) new Gson().fromJson(this.load, ArrayList.class));
+            } else {
+                File xmlFile = selectedFile;
 
+                JAXBContext jaxbContext;
+                try {
+                    jaxbContext = JAXBContext.newInstance(ArrayList.class);
+
+                    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+
+                    ArrayList<Shape> newDb = (ArrayList<Shape>) jaxbUnmarshaller.unmarshal(xmlFile);
+
+                    dao.setDb(newDb);
+
+                } catch (JAXBException e) {
+                    e.printStackTrace();
+                }
+            }
+            dao.setStackRedo(new Stack<>());
+            dao.setStackUndo(new Stack<>());
+            dao.maintainState();
+        }
+    }
 }

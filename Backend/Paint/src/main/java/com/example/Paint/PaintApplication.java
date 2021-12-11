@@ -8,8 +8,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 public class PaintApplication {
 
 	public static void main(String[] args) {
-		var ctx = new SpringApplicationBuilder(PaintApplication.class)
-			.headless(false).run(args);
+		var ctx = new SpringApplicationBuilder(PaintApplication.class).headless(false).run(args);
 	}
 
 }
