@@ -88,9 +88,19 @@ public class Triangle extends Shape{
 
         return ret;
     }
-
     @Override
-    public IShape resize(double scale) {
-        return null;
+    public IShape resize(int x, int y)  {
+        Triangle ret = null;
+        try {
+            ret = this.clone();
+            ret.p2.x += x;
+            ret.p2.y += y;
+            ret.p3.x -= x;
+            ret.p3.y += y;
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        return ret;
     }
 }

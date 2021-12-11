@@ -77,7 +77,16 @@ public class Line extends Shape{
     }
 
     @Override
-    public IShape resize(double scale) {
-        return null;
+    public IShape resize(int x, int y){
+        Line ret = null;
+        try {
+            ret = this.clone();
+            ret.p2.x += x;
+            ret.p2.y += y;
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        return ret;
     }
 }

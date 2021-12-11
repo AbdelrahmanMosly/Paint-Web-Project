@@ -8,8 +8,11 @@ public class Rectangle extends Shape {
 
     public Rectangle(int strokeSize, String color, boolean filled, Point p1, Point p2) {
         super("Rectangle", strokeSize, color, filled);
+
         this.p1 = p1;
         this.p2 = p2;
+        maintainPoints();
+
     }
 
     public Point getP1() {
@@ -27,7 +30,18 @@ public class Rectangle extends Shape {
     public void setP2(Point p2) {
         this.p2 = p2;
     }
-
+    private void maintainPoints(){
+        if(this.p2.x<0){
+            this.p2.x*=-1;
+            this.p1.x-=this.p2.x;
+        }
+        if(this.p2.y<0){
+            this.p2.y*=-1;
+            this.p1.y-=this.p2.y;
+        }
+        System.out.println(this.p1.x +" "+this.p1.y);
+        System.out.println(this.p2.x +" "+this.p2.y);
+    }
     @Override
     public boolean cursorOnShape(Point point) {
         return point.x >= p1.x && point.y >=p1.y && point.x <= p1.x+p2.x && point.y <= p1.y+p2.y;
@@ -50,12 +64,11 @@ public class Rectangle extends Shape {
     @Override
     public IShape move(int x, int y) {
         Rectangle ret = null;
+
         try {
             ret = this.clone();
             ret.p1.x += x;
             ret.p1.y += y;
-            ret.p2.x += x;
-            ret.p2.y += y;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -64,7 +77,32 @@ public class Rectangle extends Shape {
     }
 
     @Override
-    public IShape resize(double scale) {
-        return null;
+    public IShape resize(int x, int y) {
+        Rectangle ret = null;
+
+        try {
+            ret = this.clone();
+            ret.p2.x += x;
+            ret.p2.y += y;
+            System.out.println(ret.p1.x +" "+ret.p1.y);
+            System.out.println(ret.p2.x +" "+ret.p2.y);
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        return ret;
+    }
+    @Override
+    public void maintainResizeSelection() {
+        if(this.p2.x<0){
+            this.p2.x*=-1;
+            this.p1.x-=this.p2.x;
+        }
+        if(this.p2.y<0){
+            this.p2.y*=-1;
+            this.p1.y-=this.p2.y;
+        }
+        System.out.println(this.p1.x +" "+this.p1.y);
+        System.out.println(this.p2.x +" "+this.p2.y);
     }
 }

@@ -14,5 +14,6 @@ public interface IShape {
 
     boolean cursorOnShape(Point point);
     IShape move(int x, int y);
-    IShape resize(double scale);
+    IShape resize(int x, int y);
+    public void maintainResizeSelection();
 }

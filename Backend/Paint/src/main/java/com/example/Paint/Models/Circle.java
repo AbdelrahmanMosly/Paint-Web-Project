@@ -67,11 +67,11 @@ public class Circle extends Shape{
     }
 
     @Override
-    public IShape resize(double scale) {
+    public IShape resize(int x, int y) {
         Circle ret = null;
         try {
             ret = this.clone();
-            ret.r1 *= scale;
+            ret.r1 += (x+y)/2;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }

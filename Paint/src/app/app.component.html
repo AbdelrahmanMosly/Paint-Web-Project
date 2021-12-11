@@ -2,12 +2,12 @@
   <div class="paint">
     <div class="ribbon">
       <div class="actions">
-        <button (click)="undo()">Undo</button>
+        <button (click)="undo()" >Undo</button>
         <button (click)="redo()">Redo</button>
         <button (click)="save()">Save</button>
         <button (click)="load()">Load</button>
         <button (click)="clear()">Clear</button>
-        <button (click)="toggleSelect()">Select</button>
+        <button (click)="toggleSelect()" id="SelectButton">Select</button>
       </div>
       <div class="shapes">
         <button [disabled]="buttons[0]" title="Select Shape" (click)="clicked('line')">Line</button>
@@ -28,8 +28,8 @@
           <option value="10">10 Px</option>
         </select>
         <input title="Select Color" type="color" #color>
-        <button [disabled]="buttons[7]" (click)="resize()">Resize</button>
-        <button [disabled]="buttons[8]" (click)="toggleMove()">Move</button>
+        <button [disabled]="buttons[7]" (click)="toggleResize()" id="ResizeButton">Resize</button>
+        <button [disabled]="buttons[8]" (click)="toggleMove()" id="MoveButton">Move</button>
         <button [disabled]="buttons[9]" (click)="copy()">Copy</button>
         <button [disabled]="buttons[10]" (click)="delete()">Delete</button>
         

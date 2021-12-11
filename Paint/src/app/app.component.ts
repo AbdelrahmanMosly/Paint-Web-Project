@@ -27,6 +27,9 @@ export class AppComponent implements AfterViewInit{
   isDrawing: boolean = false;
   isSelecting: boolean = false;
   isMoving: boolean = false;
+  isMoveStart: boolean = false;
+  isResizing: boolean = false;
+  isResizeStart: boolean = false;
   x1!: number;
   x2!: number;
   y1!: number;
@@ -36,6 +39,7 @@ export class AppComponent implements AfterViewInit{
   fill: boolean = false;
   dummyPoint: Point = new Point(0, 0);
   shape!: Shape;
+  
   ngAfterViewInit(): void {
     this.ctx = this.canvas.nativeElement.getContext('2d');
     this.ctx.canvas.width = window.innerWidth * 0.97;
@@ -48,9 +52,18 @@ export class AppComponent implements AfterViewInit{
     this.canvas.nativeElement.addEventListener('mousedown', this.select.bind(this));
 
     this.canvas.nativeElement.addEventListener('mousedown', this.moveStart.bind(this));
-    this.canvas.nativeElement.addEventListener('mousemove', this.moveDrag.bind(this));
+    this.canvas.nativeElement.addEventListener('mousemove', this.moveDrag.bind(this)); 
+    this.canvas.nativeElement.addEventListener('mouseup', this.moveEnd.bind(this));
+
+    this.canvas.nativeElement.addEventListener('mousedown', this.resizeStart.bind(this));
+    this.canvas.nativeElement.addEventListener('mousemove', this.resizeDrag.bind(this)); 
+    this.canvas.nativeElement.addEventListener('mouseup', this.resizeEnd.bind(this));
+
+    
     
   }
+  
+  
 
   drawShape(sh: Shape){
     switch(sh.shapeType.toLowerCase()){
@@ -101,6 +114,19 @@ export class AppComponent implements AfterViewInit{
 
   toggleSelect(){
     this.isSelecting = !this.isSelecting;
+    
+    var elem = document.getElementById('SelectButton');
+    if(this.isSelecting)
+    {
+      if(elem)
+        elem.style.color = "red";
+    }
+    else{
+      if(elem)
+        elem.style.color = "blue";
+    }
+
+    
   }
 
   select(event : MouseEvent){
@@ -150,7 +176,32 @@ export class AppComponent implements AfterViewInit{
 
   toggleMove(){
     this.isMoving = !this.isMoving;
+    var elem = document.getElementById('MoveButton');
+    if(this.isMoving)
+    {
+      if(elem)
+        elem.style.color = "red";
+    }
+    else{
+      if(elem)
+        elem.style.color = "blue";
+    }
+
   }
+  toggleResize(){
+    this.isResizing = !this.isResizing;
+    var elem = document.getElementById('ResizeButton');
+    if(this.isResizing)
+    {
+      if(elem)
+        elem.style.color = "red";
+    }
+    else{
+      if(elem)
+        elem.style.color = "blue";
+    }
+  }
+
 
   clicked(value: string){
     this.isSelecting = false;
@@ -383,7 +434,7 @@ export class AppComponent implements AfterViewInit{
         this.drawFrame();
       });
   }
-
+/*
   resize(){
     this.api.send("/resize", 0).subscribe(
       () => {},
@@ -403,7 +454,7 @@ export class AppComponent implements AfterViewInit{
         this.drawFrame();
       });
   }
-
+*/
   copy(){
     this.api.send("/copy", 0).subscribe(
       () => {},
@@ -424,19 +475,75 @@ export class AppComponent implements AfterViewInit{
       });
   }
 
+  
   moveStart(event: MouseEvent){
-    if(!this.isMoving)
+    if(!this.isMoving || !this.isSelecting)
       return;
+    this.isMoveStart=true;
     let x = event.clientX - this.bounds.left;
     let y = event.clientY - this.bounds.top;
     this.api.send("/setInitialPosition", {x, y}).subscribe();
   }
 
+
   moveDrag(event: MouseEvent){
-    if(!this.isMoving)
+    if(!this.isMoveStart || !this.isSelecting)
       return;
     let x = event.clientX - this.bounds.left;
     let y = event.clientY - this.bounds.top;
-    this.api.send("/doAction", {x, y}).subscribe();
+    if(x>=0 &&y>=0){
+      this.api.send("/doAction", {x, y}).subscribe();
+    }
   }
+
+  moveEnd(event: MouseEvent){
+    if(this.isMoving){
+      this.isSelecting=false;
+      this.isMoveStart=false;
+      this.isMoving=false;
+      this.api.send("/endAction", 0).subscribe(
+        () => {},
+        () => {},
+        () =>{
+          this.getFrame();
+          this.drawFrame();
+        });
+    }
+  }
+  resizeStart(event: MouseEvent){
+    if(!this.isResizing || !this.isSelecting)
+      return;
+    this.isResizeStart=true;
+    let x = event.clientX - this.bounds.left;
+    let y = event.clientY - this.bounds.top;
+    this.api.send("/setInitialPosition", {x, y}).subscribe();
+  }
+
+
+  resizeDrag(event: MouseEvent){
+    if(!this.isResizeStart || !this.isSelecting)
+      return;
+    let x = event.clientX - this.bounds.left;
+    let y = event.clientY - this.bounds.top;
+    if(x>=0 &&y>=0){
+      this.api.send("/resize", {x, y}).subscribe();
+    }
+  }
+
+  resizeEnd(event: MouseEvent){
+    if(this.isResizing){
+      this.isSelecting=false;
+      this.isResizeStart=false;
+      this.isResizing=false;
+      this.api.send("/endResizing", 0).subscribe(
+        () => {},
+        () => {},
+        () =>{
+          this.getFrame();
+          this.drawFrame();
+        });
+    }
+  }
+
+  
 }

@@ -22,6 +22,7 @@ public class PaintController {
     private final ShapeFactory shapeFactory = new ShapeFactory();
     private final DAO dao = new DAO();
     private ArrayList<Shape> selected = new ArrayList<>();
+    private ArrayList<Shape> moved = new ArrayList<>();
     private int previousX;
     private int previousY;
 
@@ -37,6 +38,7 @@ public class PaintController {
         }catch (Exception e){
             e.printStackTrace();
         }
+        deselect();
     }
 
 
@@ -59,24 +61,30 @@ public class PaintController {
     }
 
     @PostMapping("/resize")
-    public void resize(@RequestBody boolean increase){
-        double scale = 1.00;
-        if(increase)
-           scale += 0.05;
-        else
-            scale -= 0.05;
+    public void resize(@RequestBody Point point){
+        int diffX = point.x - previousX;
+        int diffY = point.y - previousY;
 
         ArrayList<Shape> nextSelected = new ArrayList<>();
         for (Shape currentShape : selected) {
-            Shape newShape = (Shape) currentShape.resize(scale);
+            Shape newShape = (Shape) currentShape.resize(diffX,diffY);
             dao.deleteShape(currentShape);
-            dao.insertShape(newShape);
             nextSelected.add(newShape);
         }
         selected = nextSelected;
-        dao.maintainState();
-    }
 
+        previousX = point.x;
+        previousY = point.y;
+    }
+    @PostMapping("/endResizing")
+    public void endResize(){
+        for (Shape currentShape : selected) {
+            currentShape.maintainResizeSelection();
+            dao.insertShape(currentShape);
+        }
+        dao.maintainState();
+        deselect();
+    }
     @PostMapping("/setInitialPosition")
     public void setInitial(@RequestBody Point point){
         previousX = point.x;
@@ -91,22 +99,26 @@ public class PaintController {
         for (Shape currentShape : selected) {
             Shape newShape = (Shape) currentShape.move(diffX, diffY);
             dao.deleteShape(currentShape);
-            dao.insertShape(newShape);
             nextSelected.add(newShape);
         }
         selected = nextSelected;
 
         previousX = point.x;
         previousY = point.y;
-
-        dao.maintainState();
     }
-
+    @PostMapping("/endAction")
+    public void endMove(){
+        for (Shape currentShape : selected) {
+            dao.insertShape(currentShape);
+        }
+        dao.maintainState();
+        deselect();
+    }
     @PostMapping("/copy")
     public void copy(){
         ArrayList<Shape> nextSelected = new ArrayList<>();
         for (Shape currentShape : selected) {
-            Shape newShape = (Shape) currentShape.move(5, 5);
+            Shape newShape = (Shape) currentShape.move(20, 20);
             dao.insertShape(newShape);
         }
         dao.maintainState();

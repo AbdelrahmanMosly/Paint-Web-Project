@@ -24,7 +24,8 @@ public abstract class Shape implements IShape, Cloneable{
     public void setShapeType(String shapeType) {
         this.shapeType = shapeType;
     }
-
+    @Override
+    public void maintainResizeSelection(){return;}
     @Override
     public int getStrokeSize() {
         return strokeSize;

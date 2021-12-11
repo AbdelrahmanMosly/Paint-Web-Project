@@ -74,12 +74,12 @@ public class Ellipse extends Shape{
     }
 
     @Override
-    public IShape resize(double scale) {
+    public IShape resize(int x, int y) {
         Ellipse ret = null;
         try {
             ret = this.clone();
-            ret.r1 *= scale;
-            ret.r2 *= scale;
+            ret.r1 += x;
+            ret.r2 -= y;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
